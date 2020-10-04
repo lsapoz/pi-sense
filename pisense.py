@@ -15,15 +15,26 @@ uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=0.25)
 pm25_sensor = plantower_pm25.PM25_UART(uart)
 print("Found PM2.5 sensor, reading data...")
 
+# store the previous data point to compare with next reading
+# the sensor outputs data faster than its own sample rate
+# to avoid the duplicate readings, we'll avoid logging data that hasn't changed
+# it's pretty unlikely that no readings change when the sensor actually re-samples the air
+previous_data = {}
+
 while True:
-    time.sleep(1)
+    time.sleep(.5)
 
     try:
         aqdata = pm25_sensor.read()
-        # print(aqdata)
-    except RuntimeError:
-        print("Unable to read from sensor, retrying...")
+    except RuntimeError as err:
+        print(f"Unable to read from sensor ({err}), retrying...")
         continue
+
+    if aqdata == previous_data:
+        print("Data did not change, skipping...")
+        continue
+
+    previous_data = aqdata.copy()
 
     print()
     print("Concentration Units (standard)")
