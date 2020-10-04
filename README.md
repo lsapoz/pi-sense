@@ -20,3 +20,21 @@ Home environmental monitor running on a Raspberry Pi. After the [2020 wildfires]
     1. Always a good idea to change the `pi` user's password while you're in here
 1. [Install Grafana](https://grafana.com/tutorials/install-grafana-on-raspberry-pi/#3) and verify you can access it via your web browser
 1. [Install InfluxDB](https://docs.influxdata.com/influxdb/v1.8/introduction/install/) using the Debian instructions
+
+## Running the script
+1. Clone the repo and `cd` into the project
+1. Set up a virtual environment `python3 -m venv .env`
+1. Activate the virtual environment `source .env/bin/activate`
+1. Install the dependencies `pip3 install -r requirements.txt`
+1. Run the script `python3 pisense.py`
+
+## Starting automatically on boot
+Once the steps to run the script are complete, the system can be configued to automatically run on boot.
+1. Copy the systemd unit file to the correct directory `sudo cp pisense.service /etc/systemd/system`
+1. Start the service `sudo systemctl start pisense`
+1. Ensure it's running correctly by checking its status (`sudo systemctl status pisense`) and monitoring its output (`sudo journalctl -f -u pisense`)
+1. If everything looks good, set it up to start on boot `sudo systemctl enable pisense`
+
+NOTE: The `pisense.service` file assumes the project is cloned to `/home/pi`, the location should be updated if its cloned elsewhere
+
+NOTE 2: If you need to run the script manually again after the service has been enabled, stop the systemd service first `sudo systemctl stop pisense`

@@ -1,0 +1,11 @@
+[Unit]
+Description=Pi-sense service
+After=influxdb.service
+
+[Service]
+ExecStart=/home/pi/pi-sense/.env/bin/python3 -u /home/pi/pi-sense/pisense.py
+Restart=on-failure
+User=pi
+
+[Install]
+WantedBy=multi-user.target
