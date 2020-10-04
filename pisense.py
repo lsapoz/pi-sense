@@ -61,9 +61,6 @@ while True:
     json_data = [
         {
             "measurement": "environmental_pm",
-            "tags" : {
-                "location": "indoors"
-            },
             "fields": {
                 "pm10": aqdata["pm10 env"],
                 "pm25": aqdata["pm25 env"],
