@@ -1,4 +1,5 @@
 adafruit-circuitpython-bme280
 adafruit-circuitpython-pm25
+adafruit-circuitpython-sgp30
 influxdb
 pyserial
