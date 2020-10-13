@@ -61,7 +61,7 @@ def monitor_bme280(bme_280: adafruit_bme280.Adafruit_BME280, influx_client: Infl
         readings['humdity'] = bme280.humidity
         readings['pressure'] = bme280.pressure
 
-        print(f"BME280 - Temp:{readings['temperature']}°C Hum:{readings['humdity']}% P:{readings['pressure']}hPa")
+        print(f"BME280 - Temp:{readings['temperature']:.2f}°C Hum:{readings['humdity']:.2f}% P:{readings['pressure']:.2f}hPa")
 
         json_data = []
         for measurement, value in readings.items():
