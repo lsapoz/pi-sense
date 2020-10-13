@@ -22,7 +22,7 @@ def monitor_pm25(pm25_sensor: adafruit_pm25.PM25, influx_client: InfluxDBClient)
 
         try:
             aqdata = pm25_sensor.read()
-        except RuntimeError as err:
+        except RuntimeError:
             # Unable to read from PM2.5 sensor, try again on the next iteration
             continue
 
