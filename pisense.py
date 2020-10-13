@@ -102,7 +102,7 @@ def monitor_sgp30(sgp30: adafruit_sgp30.Adafruit_SGP30, influx_client: InfluxDBC
 
     if baseline:
         try:
-            print(f"SGP30 - Initalizing baseline -  eCO2:{baseline['baseline_eCO2']} TVOC:{baseline['baseline_TVOC']}")
+            print(f"SGP30 - Initializing baseline -  eCO2:{baseline['baseline_eCO2']} TVOC:{baseline['baseline_TVOC']}")
             sgp30.set_iaq_baseline(baseline['baseline_eCO2'], baseline['baseline_TVOC'])
 
             # since we set the baseline, we can start logging data after a short 1 minute warm-up
@@ -131,6 +131,7 @@ def monitor_sgp30(sgp30: adafruit_sgp30.Adafruit_SGP30, influx_client: InfluxDBC
         if time.time() > next_baseline_read:
             baseline['baseline_eCO2'] = sgp30.baseline_eCO2
             baseline['baseline_TVOC'] = sgp30.baseline_TVOC
+            print(f"SGP30 - Saving baseline -  eCO2:{baseline['baseline_eCO2']} TVOC:{baseline['baseline_TVOC']}")
             config_data = {
                 serial_str: baseline
             }
