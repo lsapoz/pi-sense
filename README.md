@@ -12,13 +12,16 @@ Home environmental monitor running on a Raspberry Pi. After the [2020 wildfires]
     1. [Add a wpa_supplicant file](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) to the boot folder and configure it to have the Pi automatically connect via Wi-Fi
     1. Add an empty `ssh` file to the boot folder to enable SSH access
     1. Flash the image onto the SD card using a tool like [balenaEtcher](https://www.balena.io/etcher/)
-1. Plug the Pi in, wait for it to boot, and connect via ssh
+1. Plug the Pi in, wait for it to boot, and connect via ssh `ssh pi@raspberrypi.local` (default password is `raspberry`)
 1. Update all the currently installed packages `sudo apt update && sudo apt upgrade`
-1. Use `sudo raspi-config` to 
+1. Use `sudo raspi-config` to: 
     1. [Disable the serial console](https://www.raspberrypi.org/documentation/configuration/uart.md) and reclaim the primary UART for our usage
     1. Enable I2C
-    1. Always a good idea to change the `pi` user's password while you're in here
-1. [Install Grafana](https://grafana.com/tutorials/install-grafana-on-raspberry-pi/#3) and verify you can access it via your web browser
+    1. Change the hostname. On subsequent boots, you should be able reach the Pi at `HOSTNAME.local` on your network (e.g. `ssh pisense.local`)
+    1. Change the `pi` user's password to something that isn't the default
+1. [Install Grafana](https://grafana.com/grafana/download?platform=arm) and verify you can access it via your web browser
+    1. Use the ARMv7 package for a Raspberry Pi 3 and the ARMv6 package for a Raspberry Pi Zero
+    1. Configure Grafana to run on startup `sudo systemctl enable grafana-server`
 1. [Install InfluxDB](https://docs.influxdata.com/influxdb/v1.8/introduction/install/) using the Debian instructions
 
 ## Running the script
@@ -38,3 +41,7 @@ Once the steps to run the script are complete, the system can be configued to au
 NOTE: The `pisense.service` file assumes the project is cloned to `/home/pi`, the location should be updated if its cloned elsewhere
 
 NOTE 2: If you need to run the script manually again after the service has been enabled, stop the systemd service first `sudo systemctl stop pisense`
+
+## Setting up Grafana Dashboard
+1. Configure the local instance of InfluxDB as a data source using `pisense` as the database
+1. Import the [dashboard file](/grafana) and connect it to the datasource
