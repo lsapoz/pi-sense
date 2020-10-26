@@ -32,7 +32,7 @@ Home environmental monitor running on a Raspberry Pi. After the [2020 wildfires]
 1. Run the script `python3 pisense.py`
 
 ## Starting automatically on boot
-Once the steps to run the script are complete, the system can be configued to automatically run on boot.
+Once the steps to run the script are complete, the system can be configured to automatically run on boot.
 1. Copy the systemd unit file to the correct directory `sudo cp pisense.service /etc/systemd/system`
 1. Start the service `sudo systemctl start pisense`
 1. Ensure it's running correctly by checking its status (`sudo systemctl status pisense`) and monitoring its output (`sudo journalctl -f -u pisense`)
@@ -44,4 +44,14 @@ NOTE 2: If you need to run the script manually again after the service has been 
 
 ## Setting up Grafana Dashboard
 1. Configure the local instance of InfluxDB as a data source using `pisense` as the database
-1. Import the [dashboard file](/grafana) and connect it to the datasource
+1. Import the [dashboard file](/grafana) and connect it to the data source
+
+## Configuration files
+
+### SGP30
+The SGP30 needs to run for 12 hours before a reasonable baseline can be stored. The script will run the sensor for 12 hours before it saves the baseline values to an `sgp30.json` file at the project root. Once the baseline values are stored, the script will begin to save sensor readings. The baseline values on disk are then updated once an hour. 
+
+On subsequent startups, the baseline will be read from file and applied to the sensor so the 12 hour warm-up period can be skipped. The baseline values are associated with the serial number of the sensor to prevent values from one sensor being applied to a different sensor. 
+
+More details on this behavior can be found [here](https://forums.adafruit.com/viewtopic.php?f=19&p=677642#p661509).
+
