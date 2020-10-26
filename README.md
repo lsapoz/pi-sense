@@ -55,3 +55,15 @@ On subsequent startups, the baseline will be read from file and applied to the s
 
 More details on this behavior can be found [here](https://forums.adafruit.com/viewtopic.php?f=19&p=677642#p661509).
 
+### BME280
+The BME280 temperature reading is susceptible to self-heating. If it's near other components that generate heat (e.g. a Raspberry Pi), the ambient temperature can be thrown off even more. And since the relative humidity is temperature-dependent, it throws that off as well. 
+
+Testing shows that the offset is fairly constant, so we can compensate for it after reading the temperature and humidity. We can determine the offset by comparing raw readings to a trusted thermometer placed near the sensor. 
+
+To apply temperature compensation, add a `bme280.json` file to the project root. The contents should be:
+```
+{
+    "temp_offset": -2.8
+}
+```
+The value of `"temp_offset"` should be the °C you want to offset the temperature reading by.

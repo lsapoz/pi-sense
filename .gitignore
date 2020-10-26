@@ -1,4 +1,5 @@
 # Project-specific config files
+bme280.json
 sgp30.json
 
 # Byte-compiled / optimized / DLL files

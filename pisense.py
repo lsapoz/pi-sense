@@ -1,3 +1,4 @@
+import math
 import json
 import pathlib
 import time
@@ -51,6 +52,20 @@ def monitor_pm25(pm25_sensor: adafruit_pm25.PM25, influx_client: InfluxDBClient)
 
 
 def monitor_bme280(bme_280: adafruit_bme280.Adafruit_BME280, influx_client: InfluxDBClient):
+    temp_offset = 0
+    config_file_path = pathlib.Path(__file__).parent / 'bme280.json'
+    try:
+        with open(config_file_path) as f:
+            config_data = json.load(f)
+            temp_offset = config_data.get("temp_offset")
+    except FileNotFoundError:
+        print('BME280 - No stored configuration found')
+    except ValueError:
+        print('BME280 - Stored configuration is invalid')
+
+    if temp_offset != 0:
+        print(f"BME280 - Temperature offset of {temp_offset}°C will be applied to readings")
+
     readings = {}
 
     while True:
@@ -60,6 +75,20 @@ def monitor_bme280(bme_280: adafruit_bme280.Adafruit_BME280, influx_client: Infl
         readings['temperature'] = bme280.temperature
         readings['humdity'] = bme280.humidity
         readings['pressure'] = bme280.pressure
+
+        # apply temp offset to calculated temp and humidity
+        if temp_offset != 0:
+            # set up variables used in compensated RH calculation
+            t_mes = readings['temperature']
+            t_comp = t_mes + temp_offset
+            rh_mes = readings['humdity']
+
+            # formula from https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME280-and-BME680-humidity-accuracy/m-p/13416/highlight/true#M3068
+            rh_comp = rh_mes * math.exp(243.12 * 17.62 * (t_mes - t_comp) / (243.12 + t_mes) / (243.12 + t_comp))
+
+            # overwrite measured readings with compensated values
+            readings['temperature'] = t_comp
+            readings['humdity'] = rh_comp
 
         print(f"BME280 - Temp:{readings['temperature']:.2f}°C Hum:{readings['humdity']:.2f}% P:{readings['pressure']:.2f}hPa")
 
